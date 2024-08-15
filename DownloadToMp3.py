@@ -38,24 +38,24 @@ def get_youtube_link(song_name):
     return videosSearch.result()["result"][0]["link"]
 
 
-def download_song(song_name):
+def download_song(song_name, folder_name):
     song_name = track[0] + " - " + track[1]
     print("Downloading Song:", song_name[:30])
 
-    file_exists = os.path.exists("Downloads/" + song_name + ".wav")
+    file_exists = os.path.exists(f"{folder_name}/{song_name}.wav")
 
     if not file_exists:
         video_link = get_youtube_link(song_name)
         video = YouTube(video_link)
         stream = video.streams.filter(only_audio=True).first()
-        stream.download(filename=f"Downloads/{song_name}.wav")
+        stream.download(filename=f"{folder_name}/{song_name}.wav")
         convert_to_mp3(
-            f"Downloads/{song_name}.wav",
-            f"Downloads/{song_name}.mp3",
+            f"{folder_name}/{song_name}.wav",
+            f"{folder_name}/{song_name}.mp3",
         )
 
         # Delete the wav file
-        os.remove(f"Downloads/{song_name}.wav")
+        os.remove(f"{folder_name}/{song_name}.wav")
 
         print("Downloading Complete")
 
@@ -68,16 +68,17 @@ if __name__ == "__main__":
     ssl._create_default_https_context = ssl._create_unverified_context
 
     sp = authenticate_user()
+    folder_name = "Tech House"
     playlist_link = (
         "https://open.spotify.com/playlist/5ceLorHEjpOjqRbIFcUPa9?si=9d045ef1fbde4e64"
     )
     track_names = get_spotify_track_list(sp, playlist_link)
 
-    if not os.path.exists("Downloads"):
-        os.mkdir("Downloads")
+    if not os.path.exists(folder_name):
+        os.mkdir(folder_name)
 
     for track in track_names:
         try:
-            download_song(track)
+            download_song(track, folder_name)
         except KeyError:
             print("Unable to Download Song:", track[0])
