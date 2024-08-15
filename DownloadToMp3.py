@@ -64,7 +64,6 @@ def download_song(song_name, folder_name):
 
 
 if __name__ == "__main__":
-
     ssl._create_default_https_context = ssl._create_unverified_context
 
     sp = authenticate_user()
